@@ -8,15 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-/**
- * JavaFX App
- */
+import java.io.IOException;
+
 public class App extends Application {
 
     private static Scene scene;
@@ -24,12 +20,27 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-    	EventBus.getDefault().register(this);
-    	client = SimpleClient.getClient();
-    	client.openConnection();
+
+        //  Load UI first so controllers exist and can register to EventBus
         scene = new Scene(loadFXML("primary"), 640, 480);
+
+
         stage.setScene(scene);
         stage.show();
+
+
+        EventBus.getDefault().register(this);
+
+        // 3) Now connect to server
+        client = SimpleClient.getClient();
+        client.openConnection();
+
+        //  Subscribe on server side after connection is open
+        try {
+            client.sendToServer("add client");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static void setRoot(String fxml) throws IOException {
@@ -40,33 +51,46 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
     }
-    
-    
 
     @Override
-	public void stop() throws Exception {
-		// TODO Auto-generated method stub
-    	EventBus.getDefault().unregister(this);
-        client.sendToServer("remove client");
-        client.closeConnection();
-		super.stop();
-	}
-    
+    public void stop() throws Exception {
+        try {
+            // Unregister App from EventBus
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
+            }
+
+            // Close server connection gracefully
+            if (client != null) {
+                try {
+                    client.sendToServer("remove client");
+                } catch (IOException ignored) {
+                    // not critical on shutdown
+                }
+                client.closeConnection();
+            }
+        } finally {
+            super.stop();
+        }
+    }
+
+    /**
+     * WarningEvent handler (demo for EventBus).
+     * Game events are handled inside PrimaryController now.
+     */
     @Subscribe
     public void onWarningEvent(WarningEvent event) {
-    	Platform.runLater(() -> {
-    		Alert alert = new Alert(AlertType.WARNING,
-        			String.format("Message: %s\nTimestamp: %s\n",
-        					event.getWarning().getMessage(),
-        					event.getWarning().getTime().toString())
-        	);
-        	alert.show();
-    	});
-    	
+        Platform.runLater(() -> {
+            Alert alert = new Alert(AlertType.WARNING,
+                    String.format("Message: %s\nTimestamp: %s\n",
+                            event.getWarning().getMessage(),
+                            event.getWarning().getTime().toString())
+            );
+            alert.show();
+        });
     }
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         launch();
     }
-
 }

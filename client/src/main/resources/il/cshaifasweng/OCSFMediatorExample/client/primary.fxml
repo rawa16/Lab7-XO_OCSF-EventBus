@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrimaryController">
-   <children>
-      <Label text="Welcome" />
-      <Button mnemonicParsing="false" onAction="#sendWarning" text="Send me a warning!" />
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
-</VBox>
+<GridPane xmlns:fx="http://javafx.com/fxml/1"
+          xmlns="http://javafx.com/javafx"
+          fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrimaryController"
+          hgap="10" vgap="10" alignment="CENTER">
+
+    <Label fx:id="statusLabel" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="3" />
+
+    <Button fx:id="b00" GridPane.rowIndex="1" GridPane.columnIndex="0" minWidth="80" minHeight="80"/>
+    <Button fx:id="b01" GridPane.rowIndex="1" GridPane.columnIndex="1" minWidth="80" minHeight="80"/>
+    <Button fx:id="b02" GridPane.rowIndex="1" GridPane.columnIndex="2" minWidth="80" minHeight="80"/>
+
+    <Button fx:id="b10" GridPane.rowIndex="2" GridPane.columnIndex="0" minWidth="80" minHeight="80"/>
+    <Button fx:id="b11" GridPane.rowIndex="2" GridPane.columnIndex="1" minWidth="80" minHeight="80"/>
+    <Button fx:id="b12" GridPane.rowIndex="2" GridPane.columnIndex="2" minWidth="80" minHeight="80"/>
+
+    <Button fx:id="b20" GridPane.rowIndex="3" GridPane.columnIndex="0" minWidth="80" minHeight="80"/>
+    <Button fx:id="b21" GridPane.rowIndex="3" GridPane.columnIndex="1" minWidth="80" minHeight="80"/>
+    <Button fx:id="b22" GridPane.rowIndex="3" GridPane.columnIndex="2" minWidth="80" minHeight="80"/>
+
+</GridPane>
